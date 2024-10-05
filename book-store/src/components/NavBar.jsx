@@ -1,7 +1,7 @@
 import React from "react";
 import SearchBar from "./SearchBar";
 import { Link } from "react-router-dom";
-import HamburgerIcon from "../assets/icons/Hamburger.svg";
+import { HamburgerIcon } from "../assets";
 
 const NavBar = () => {
   return (
@@ -23,7 +23,7 @@ const NavBar = () => {
         </Link>
       </div>
       <div className="md:hidden block">
-        <img className="h-7 w-7" src={HamburgerIcon}></img>
+        <HamburgerIcon className={"h-7 w-7"} />
       </div>
     </div>
   );

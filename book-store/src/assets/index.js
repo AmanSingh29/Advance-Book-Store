@@ -1,1 +1,1 @@
-export { default as HamburgerIcon } from "./icons/Hamburger.svg";
+export { default as HamburgerIcon } from "./icons/Hamburger.svg?react";
