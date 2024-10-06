@@ -11,15 +11,12 @@ const NavBar = () => {
         <SearchBar />
       </div>
       <div className="md:flex hidden lg:w-1/3 xl:w-1/4 w-1/2 justify-between font-semibold">
-        <Link to={"/"} className="cursor-pointer">
-          <li className="list-none">HOME</li>
-        </Link>
-        <li className="cursor-pointer list-none">CATEGORIES</li>
+        <li className="cursor-pointer list-none">Categories</li>
         <Link to={"/about"} className="cursor-pointer">
-          <li className="list-none">ABOUT</li>
+          <li className="list-none">My Account</li>
         </Link>
         <Link to={"/contact"} className="cursor-pointer">
-          <li className="list-none">CONTACT</li>
+          <li className="list-none">Cart</li>
         </Link>
       </div>
       <div className="md:hidden block">
