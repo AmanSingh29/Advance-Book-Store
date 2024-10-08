@@ -24,7 +24,7 @@ const useApi = () => {
     post: (url, data, config) => fetchApi("post", url, data, config),
     patch: (url, data, config) => fetchApi("patch", url, data, config),
     delete: (url, config) => fetchApi("delete", url, null, config),
-    put: (url, data, config) => fetchApi("get", url, data, config),
+    put: (url, data, config) => fetchApi("put", url, data, config),
   };
 
   return { api, error, loading };
