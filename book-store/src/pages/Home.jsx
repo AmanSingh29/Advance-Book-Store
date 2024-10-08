@@ -1,12 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import NavBar from "../components/NavBar";
 import CoverImage from "../assets/images/cover/CoverImage.webp";
 import CoverImageLazy from "../assets/images/cover/CoverImageLazy.webp";
+import useApi from "../hooks/useApi";
 
 const Home = () => {
   const [backgroundImage, setBackgroundImage] = useState(CoverImageLazy);
+  const { api } = useApi();
+
+  const fetchData = useCallback(async () => {
+    const res = await api.get("/v1/healthCheck");
+    console.log("this is response---------", res);
+  }, []);
 
   useEffect(() => {
+    fetchData();
     const img = new Image();
     img.src = CoverImage;
     img.onload = () => setBackgroundImage(CoverImage);
