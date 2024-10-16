@@ -4,6 +4,7 @@ import CoverImage from "../assets/images/cover/CoverImage.webp";
 import CoverImageLazy from "../assets/images/cover/CoverImageLazy.webp";
 import useApi from "../hooks/useApi";
 import BookCard from "../components/BookCard";
+import { BOOKS_PATH } from "../constants/endpoints";
 
 const Home = () => {
   const [backgroundImage, setBackgroundImage] = useState(CoverImageLazy);
@@ -11,7 +12,7 @@ const Home = () => {
   const { api } = useApi();
 
   const fetchData = useCallback(async () => {
-    const res = await api.get("/v1/books");
+    const res = await api.get(BOOKS_PATH);
     if (res.data) setBooks(res.data.bookData);
     console.log("this is response---------", res);
   }, []);
@@ -44,14 +45,16 @@ const Home = () => {
           Browse Books
         </button>
       </div>
-      <div className="flex overflow-x-auto gap-5 px-6 w-full mt-6">
-        {books?.map((book, index) => {
-          return (
-            <div key={index} className="w-1/5">
-              <BookCard book={book} />
-            </div>
-          );
-        })}
+      <div className="relative w-full my-6 px-6">
+        <div className="flex gap-5 overflow-x-scroll scrollbar-hide">
+          {books?.map((book, index) => {
+            return (
+              <div key={index}>
+                <BookCard book={book} />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
