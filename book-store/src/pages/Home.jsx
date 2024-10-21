@@ -3,19 +3,35 @@ import NavBar from "../components/NavBar";
 import CoverImage from "../assets/images/cover/CoverImage.webp";
 import CoverImageLazy from "../assets/images/cover/CoverImageLazy.webp";
 import useApi from "../hooks/useApi";
-import BookCard from "../components/BookCard";
 import { BOOKS_PATH } from "../constants/endpoints";
 import HomePageSection from "../components/HomePageSection";
+import BookLoader from "../components/BookLoader";
 
 const Home = () => {
   const [backgroundImage, setBackgroundImage] = useState(CoverImageLazy);
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState({ hotDeals: [], recentPublished: [] });
+  const [loading, setLoading] = useState(false);
   const { api } = useApi();
 
   const fetchData = useCallback(async () => {
-    const res = await api.get(BOOKS_PATH);
-    if (res.data) setBooks(res.data.bookData);
-    console.log("this is response---------", res);
+    try {
+      setLoading(true);
+      const [resHotDeals, resRecentPublished] = await Promise.all([
+        api.get(BOOKS_PATH, { params: { is_on_discount: true } }),
+        api.get(BOOKS_PATH),
+      ]);
+      if (resHotDeals.data)
+        setBooks((prev) => ({ ...prev, hotDeals: resHotDeals.data.bookData }));
+      if (resRecentPublished.data)
+        setBooks((prev) => ({
+          ...prev,
+          recentPublished: resRecentPublished.data.bookData,
+        }));
+    } catch (error) {
+      console.log("err in getting homepage data", error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -24,6 +40,10 @@ const Home = () => {
     img.src = CoverImage;
     img.onload = () => setBackgroundImage(CoverImage);
   }, []);
+
+  if (loading) {
+    return <BookLoader fullPage />;
+  }
 
   return (
     <div>
@@ -46,11 +66,15 @@ const Home = () => {
           Browse Books
         </button>
       </div>
-      {books?.length && <HomePageSection data={books} heading={"Top Deals"} />}
-      {books?.length && <HomePageSection data={books} heading={"Top Deals"} />}
-      {books?.length && <HomePageSection data={books} heading={"Top Deals"} />}
-      {books?.length && <HomePageSection data={books} heading={"Top Deals"} />}
-      {books?.length && <HomePageSection data={books} heading={"Top Deals"} />}
+      {books?.hotDeals?.length && (
+        <HomePageSection data={books?.hotDeals} heading={"Top Deals"} />
+      )}
+      {books?.recentPublished?.length && (
+        <HomePageSection
+          data={books?.recentPublished}
+          heading={"Recent Published"}
+        />
+      )}
     </div>
   );
 };
