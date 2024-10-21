@@ -5,6 +5,7 @@ import CoverImageLazy from "../assets/images/cover/CoverImageLazy.webp";
 import useApi from "../hooks/useApi";
 import BookCard from "../components/BookCard";
 import { BOOKS_PATH } from "../constants/endpoints";
+import HomePageSection from "../components/HomePageSection";
 
 const Home = () => {
   const [backgroundImage, setBackgroundImage] = useState(CoverImageLazy);
@@ -45,17 +46,11 @@ const Home = () => {
           Browse Books
         </button>
       </div>
-      <div className="relative w-full my-6 px-6">
-        <div className="flex gap-5 overflow-x-scroll scrollbar-hide">
-          {books?.map((book, index) => {
-            return (
-              <div key={index}>
-                <BookCard book={book} />
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      {books?.length && <HomePageSection data={books} heading={"Top Deals"} />}
+      {books?.length && <HomePageSection data={books} heading={"Top Deals"} />}
+      {books?.length && <HomePageSection data={books} heading={"Top Deals"} />}
+      {books?.length && <HomePageSection data={books} heading={"Top Deals"} />}
+      {books?.length && <HomePageSection data={books} heading={"Top Deals"} />}
     </div>
   );
 };

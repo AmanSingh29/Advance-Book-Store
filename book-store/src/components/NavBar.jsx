@@ -5,7 +5,7 @@ import { HamburgerIcon } from "../assets";
 
 const NavBar = () => {
   return (
-    <div className="flex content-center lg:justify-around justify-between px-4 lg:px-0 w-[100vw] bg-navy py-3 text-white">
+    <div className="flex content-center lg:justify-around justify-between px-4 lg:px-0 w-full bg-navy py-3 text-white">
       <div>BookNest</div>
       <div className="w-96 lg:block hidden">
         <SearchBar />

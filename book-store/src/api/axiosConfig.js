@@ -3,7 +3,7 @@ const url = import.meta.env.VITE_API_HOST;
 
 const axiosInstanse = axios.create({
   baseURL: url,
-  timeout: 10000,
+  timeout: 20000,
   headers: {
     "Content-Type": "application/json",
   },

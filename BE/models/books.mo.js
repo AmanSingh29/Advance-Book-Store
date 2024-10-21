@@ -29,11 +29,11 @@ const BookSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    publishDate: {
+    publish_date: {
       type: Date,
       required: true,
     },
-    pageCount: {
+    page_count: {
       type: Number,
       required: true,
     },
