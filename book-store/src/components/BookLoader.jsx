@@ -9,7 +9,7 @@ const BookLoader = ({
   return (
     <div
       className={`flex flex-col justify-center items-center ${
-        fullPage ? "h-screen w-screen" : "h-full w-full"
+        fullPage ? "h-[100vh] w-[100vw]" : "h-full w-full"
       }`}
     >
       <div className="w-[25%] sm:w-[10%]">

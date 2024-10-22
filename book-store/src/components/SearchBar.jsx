@@ -2,12 +2,21 @@ import React, { useCallback, useEffect, useState } from "react";
 import { SearchIcon } from "../assets";
 import useApi from "../hooks/useApi";
 import { SUGGESTION_PATH } from "../constants/endpoints";
+import { useNavigate } from "react-router-dom";
 
 const SearchBar = () => {
   const [searchSuggestation, setSearchSuggestation] = useState([]);
   const [textInput, setTextInput] = useState("");
   const [debounceTimeout, setDebounceTimeout] = useState(null);
   const { api } = useApi();
+
+  const navigate = useNavigate();
+  const handleNavigate = useCallback(
+    (bid) => {
+      navigate(`/book-details/${bid}`);
+    },
+    [searchSuggestation, textInput]
+  );
 
   const fetchSuggestion = useCallback(async () => {
     if (textInput?.length > 2) {
@@ -50,6 +59,7 @@ const SearchBar = () => {
             <p
               key={index}
               className="px-2 py-2 text-black cursor-pointer border-b border-gray-400 hover:bg-gray-200"
+              onClick={() => handleNavigate(suggestion?.bid)}
             >
               {suggestion?.title}
             </p>
