@@ -117,6 +117,7 @@ async function getBooks(req, res, next) {
               language: 1,
               stock: 1,
               image: 1,
+              bid: 1,
               is_on_discount: 1,
               discount: 1,
               created_at: 1,

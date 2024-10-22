@@ -5,9 +5,12 @@ import BookCard from "./BookCard";
 const HomePageSection = ({ heading, data }) => {
   const navigate = useNavigate();
 
-  const handleNavigate = useCallback(() => {
-    navigate("/book-details-d453de3");
-  }, []);
+  const handleNavigate = useCallback(
+    (bid) => {
+      navigate(`/book-details/${bid}`);
+    },
+    [data]
+  );
 
   return (
     <div className="relative w-full my-8 px-6">
@@ -23,7 +26,7 @@ const HomePageSection = ({ heading, data }) => {
       <div className="flex gap-5 overflow-x-scroll scrollbar-hide">
         {data?.map((book, index) => {
           return (
-            <div onClick={handleNavigate} key={index}>
+            <div onClick={() => handleNavigate(book?.bid)} key={index}>
               <BookCard book={book} />
             </div>
           );
