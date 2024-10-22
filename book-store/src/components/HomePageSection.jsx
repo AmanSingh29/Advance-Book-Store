@@ -1,8 +1,14 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import BookCard from "./BookCard";
 
 const HomePageSection = ({ heading, data }) => {
+  const navigate = useNavigate();
+
+  const handleNavigate = useCallback(() => {
+    navigate("/book-details-d453de3");
+  }, []);
+
   return (
     <div className="relative w-full my-8 px-6">
       <div className="flex items-center justify-between pb-4 px-6">
@@ -17,7 +23,7 @@ const HomePageSection = ({ heading, data }) => {
       <div className="flex gap-5 overflow-x-scroll scrollbar-hide">
         {data?.map((book, index) => {
           return (
-            <div key={index}>
+            <div onClick={handleNavigate} key={index}>
               <BookCard book={book} />
             </div>
           );

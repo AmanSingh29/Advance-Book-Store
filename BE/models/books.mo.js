@@ -7,6 +7,13 @@ const BookSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    bid: {
+      type: String,
+      required: true,
+      trim: true,
+      index: true,
+      unique: true,
+    },
     author: {
       type: String,
       required: true,

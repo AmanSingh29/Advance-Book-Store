@@ -1,12 +1,14 @@
 const mongoose = require("mongoose");
 const { SORT_ORDER } = require("../constants/dbEnum");
 const { getFilterByPriceStage, getFilterByDate } = require("../Utils/books.ut");
+const { generateAlphanumericString } = require("../Utils/common.ut");
 const Book = mongoose.model("books");
 
 module.exports = {
   createBook,
   getBooks,
   getBookSuggestions,
+  getBookDetails,
 };
 
 async function createBook(req, res, next) {
@@ -26,7 +28,9 @@ async function createBook(req, res, next) {
       is_on_discount,
       discount,
     } = req.body;
+    const bid = generateAlphanumericString();
     const bookData = await new Book({
+      bid,
       title,
       author,
       description,
@@ -152,6 +156,7 @@ async function getBookSuggestions(req, res, next) {
       {
         $project: {
           title: 1,
+          bid: 1,
         },
       },
       {
@@ -160,6 +165,16 @@ async function getBookSuggestions(req, res, next) {
     );
     const response = await Book.aggregate(pipeline);
     res.status(200).json({ suggestions: response });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function getBookDetails(req, res, next) {
+  try {
+    const { bid } = req.query;
+    const response = await Book.findOne({ bid });
+    res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
