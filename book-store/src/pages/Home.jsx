@@ -6,6 +6,7 @@ import useApi from "../hooks/useApi";
 import { BOOKS_PATH } from "../constants/endpoints";
 import HomePageSection from "../components/HomePageSection";
 import BookLoader from "../components/BookLoader";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [backgroundImage, setBackgroundImage] = useState(CoverImageLazy);
@@ -62,14 +63,16 @@ const Home = () => {
           “A room without books is like a body without a soul.” — Marcus Tullius
           Cicero
         </p>
-        <button className="relative sm:text-lg text-sm z-10 sm:mt-6 mt-3 bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded">
-          Browse Books
-        </button>
+        <Link to={"/explore"}>
+          <button className="relative sm:text-lg text-sm z-10 sm:mt-6 mt-3 bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded">
+            Browse Books
+          </button>
+        </Link>
       </div>
-      {books?.hotDeals?.length && (
+      {!!books?.hotDeals?.length && (
         <HomePageSection data={books?.hotDeals} heading={"Top Deals"} />
       )}
-      {books?.recentPublished?.length && (
+      {!!books?.recentPublished?.length && (
         <HomePageSection
           data={books?.recentPublished}
           heading={"Recent Published"}

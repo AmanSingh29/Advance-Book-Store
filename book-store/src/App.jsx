@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Explore } from "./pages/Explore";
 import Home from "./pages/Home";
+import Explore from "./pages/Explore";
 import BookDetails from "./pages/BookDetails";
 
 function App() {
