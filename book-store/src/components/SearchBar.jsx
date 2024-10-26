@@ -41,6 +41,11 @@ const SearchBar = () => {
     return () => clearTimeout(newTimeout);
   }, [textInput, fetchSuggestion]);
 
+  const handleSearch = useCallback(() => {
+    setSearchSuggestation([]);
+    navigate(`/explore/?search_text=${textInput}`);
+  }, [textInput]);
+
   return (
     <div className="w-full relative flex">
       <input
@@ -50,7 +55,10 @@ const SearchBar = () => {
         value={textInput}
         onChange={(e) => setTextInput(e.target.value)}
       />
-      <div className="w-1/12 bg-transparent border cursor-pointer border-l-white flex justify-center items-center">
+      <div
+        onClick={handleSearch}
+        className="w-1/12 bg-transparent border cursor-pointer border-l-white flex justify-center items-center"
+      >
         <SearchIcon className="h-5 w-5" />
       </div>
       {searchSuggestation?.length > 0 && (

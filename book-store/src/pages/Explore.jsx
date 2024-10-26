@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import NavBar from "../components/NavBar";
 import BookLoader from "../components/BookLoader";
 import useApi from "../hooks/useApi";
@@ -6,6 +6,7 @@ import { SearchIcon } from "../assets";
 import { BOOKS_PATH } from "../constants/endpoints";
 import BookCard from "../components/BookCard";
 import Pagination from "../components/Pagination";
+import { useLocation } from "react-router-dom";
 
 const Explore = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -13,6 +14,12 @@ const Explore = () => {
   const [pages, setPages] = useState([]);
   const [filter, setFilter] = useState({ page: 1 });
   const { api, loading } = useApi();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  const search_text = useMemo(() => {
+    return queryParams.get("search_text") || "";
+  }, [queryParams]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -20,7 +27,7 @@ const Explore = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const params = filter;
+      const params = { ...filter, search_text };
       const response = await api.get(BOOKS_PATH, { params });
       if (response.data) {
         setBooks(response.data.bookData);
@@ -32,14 +39,15 @@ const Explore = () => {
     } catch (error) {
       console.log("Error in getting books data", error);
     }
-  }, [pages, filter]);
+  }, [pages, filter, queryParams]);
 
   useEffect(() => {
     fetchData();
-  }, [filter]);
+  }, [filter, search_text]);
 
   const handlePageChange = useCallback(
     (page) => {
+      if (page === filter?.page) return;
       setFilter((prev) => ({ ...prev, page }));
     },
     [filter?.page]
