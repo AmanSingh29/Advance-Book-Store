@@ -5,10 +5,13 @@ import useApi from "../hooks/useApi";
 import { SearchIcon } from "../assets";
 import { BOOKS_PATH } from "../constants/endpoints";
 import BookCard from "../components/BookCard";
+import Pagination from "../components/Pagination";
 
 const Explore = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [books, setBooks] = useState([]);
+  const [pages, setPages] = useState([]);
+  const [filter, setFilter] = useState({ page: 1 });
   const { api, loading } = useApi();
 
   const toggleSidebar = () => {
@@ -17,16 +20,30 @@ const Explore = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const response = await api.get(BOOKS_PATH);
-      if (response.data) setBooks(response.data.bookData);
+      const params = filter;
+      const response = await api.get(BOOKS_PATH, { params });
+      if (response.data) {
+        setBooks(response.data.bookData);
+        const count = response.data.count;
+        const pageLength = count % 10 === 0 ? count / 10 : count / 10 + 1;
+        const arr = Array.from({ length: pageLength }, (_, i) => i + 1);
+        setPages(arr);
+      }
     } catch (error) {
       console.log("Error in getting books data", error);
     }
-  }, []);
+  }, [pages, filter]);
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, [filter]);
+
+  const handlePageChange = useCallback(
+    (page) => {
+      setFilter((prev) => ({ ...prev, page }));
+    },
+    [filter?.page]
+  );
 
   return (
     <>
@@ -101,6 +118,13 @@ const Explore = () => {
                     <BookCard book={book} />
                   </div>
                 ))}
+            </div>
+            <div className="w-full">
+              <Pagination
+                currentPage={filter?.page}
+                onPageChange={handlePageChange}
+                pages={pages}
+              />
             </div>
           </div>
         </div>
