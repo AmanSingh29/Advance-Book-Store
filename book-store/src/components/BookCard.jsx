@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import Image from "./Image";
 import { calculateDiscount } from "../utils/commonFunctions";
+import { Link } from "react-router-dom";
 
 const BookCard = ({ book }) => {
   const discountedPrice = useMemo(() => {
@@ -11,7 +12,11 @@ const BookCard = ({ book }) => {
 
   return (
     <div className="border rounded-lg shadow-lg p-3 flex flex-col w-[250px] bg-white relative font-sans">
-      <div className="relative mb-4 w-full h-48 bg-gray-100 flex items-center justify-center rounded-md overflow-hidden">
+      <Link
+        target="_blank"
+        to={`/book-details/${book?.bid}`}
+        className="relative mb-4 w-full h-48 bg-gray-100 flex items-center justify-center rounded-md overflow-hidden"
+      >
         {book.image ? (
           <Image alt={book.title} src={book.image} />
         ) : (
@@ -22,7 +27,7 @@ const BookCard = ({ book }) => {
             {book.discount}% Off
           </div>
         )}
-      </div>
+      </Link>
       <h3 className="text-lg font-bold mb-2 text-gray-900 line-clamp-1">
         {book.title}
       </h3>

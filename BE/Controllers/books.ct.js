@@ -92,7 +92,7 @@ async function getBooks(req, res, next) {
     }
     if (language) matchStage.language = language;
     if (is_on_discount === "true") matchStage.is_on_discount = true;
-    if (in_stock) matchStage.in_stock = { $gt: 0 };
+    if (in_stock === "true") matchStage.in_stock = { $gt: 0 };
     if (publisher) matchStage.publisher = publisher;
     pipeline.push({ $match: matchStage });
     pipeline.push({

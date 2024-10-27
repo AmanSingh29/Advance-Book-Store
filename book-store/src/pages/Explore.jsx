@@ -7,12 +7,29 @@ import { BOOKS_PATH } from "../constants/endpoints";
 import BookCard from "../components/BookCard";
 import Pagination from "../components/Pagination";
 import { useLocation } from "react-router-dom";
+import CommonDropdown from "../components/CommonDropdown";
+import {
+  BOOK_LANGUAGE_OPTIONS,
+  GENRE_OPTIONS,
+  SORT_BY_DROPDOWN,
+  SortValueAndOrder,
+} from "../constants";
+import CheckboxFilter from "../components/CheckboxFilter";
+import ToggleButton from "../components/ToggleFilter";
 
 const Explore = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState({});
   const [pages, setPages] = useState([]);
-  const [filter, setFilter] = useState({ page: 1 });
+  const [filter, setFilter] = useState({
+    page: 1,
+    sort_by: "publish_date",
+    sort_order: "descending",
+    genre: "",
+    language: "",
+    is_on_discount: false,
+    // in_stock: false,
+  });
   const { api, loading } = useApi();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -30,7 +47,7 @@ const Explore = () => {
       const params = { ...filter, search_text };
       const response = await api.get(BOOKS_PATH, { params });
       if (response.data) {
-        setBooks(response.data.bookData);
+        setBooks(response.data);
         const count = response.data.count;
         const pageLength = count % 10 === 0 ? count / 10 : count / 10 + 1;
         const arr = Array.from({ length: pageLength }, (_, i) => i + 1);
@@ -53,22 +70,48 @@ const Explore = () => {
     [filter?.page]
   );
 
+  const handleSortChange = useCallback(
+    (val) => {
+      const value = SortValueAndOrder[val];
+      setFilter((prev) => ({ ...prev, ...value }));
+    },
+    [filter?.sort_by, filter?.sort_order]
+  );
+
+  const handleGenreChange = useCallback(
+    (value) => {
+      const val = value?.join(",");
+      setFilter((prev) => ({ ...prev, genre: val }));
+    },
+    [filter?.genre]
+  );
+
+  const handleLanguageChange = useCallback(
+    (value) => {
+      setFilter((prev) => ({ ...prev, language: value }));
+    },
+    [filter?.language]
+  );
+
+  const handleToggleChange = useCallback(
+    (key) => {
+      setFilter((prev) => ({ ...prev, [key]: !prev[key] }));
+      console.log("this is filter--------", filter, key);
+    },
+    [filter?.is_on_discount, filter?.in_stock]
+  );
+
   return (
     <>
       <NavBar />
       <div className="container mx-auto px-4 py-8">
         {/* Header with Item Count and Sorting */}
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">{books.length} Items</h2>
-          <div className="flex space-x-4 items-center">
-            <p className="text-gray-500">Sort by:</p>
-            <select className="border border-gray-300 rounded-md p-2">
-              <option value="relevance">Relevance</option>
-              <option value="low_to_high">Price: Low to High</option>
-              <option value="high_to_low">Price: High to Low</option>
-              <option value="best_selling">Best Selling</option>
-            </select>
-          </div>
+          <h2 className="text-2xl font-bold">{books?.count} Items</h2>
+          <CommonDropdown
+            options={SORT_BY_DROPDOWN}
+            onSelect={handleSortChange}
+          />
         </div>
 
         {/* Main Layout */}
@@ -82,18 +125,36 @@ const Explore = () => {
             <h2 className="text-xl font-semibold mb-4">Filters</h2>
 
             {/* Genre Filter */}
-            <div className="mb-6">
-              <h3 className="font-medium mb-2">Genre</h3>
-              <div className="space-y-2">
-                <label className="flex items-center">
-                  <input type="checkbox" className="mr-2" />
-                  Fiction
-                </label>
-                <label className="flex items-center">
-                  <input type="checkbox" className="mr-2" />
-                  Non-Fiction
-                </label>
-              </div>
+            <div className="w-full">
+              <CheckboxFilter
+                onChange={handleGenreChange}
+                options={GENRE_OPTIONS}
+              />
+            </div>
+
+            <div className="w-full">
+              <CheckboxFilter
+                singleSelect
+                title="Language"
+                onChange={handleLanguageChange}
+                options={BOOK_LANGUAGE_OPTIONS}
+              />
+            </div>
+
+            <div className="w-full">
+              <ToggleButton
+                isOn={filter?.is_on_discount}
+                label={"Show with Discount"}
+                onToggle={() => handleToggleChange("is_on_discount")}
+              />
+            </div>
+
+            <div className="w-full">
+              <ToggleButton
+                isOn={filter?.in_stock}
+                label={"Show only in Stock"}
+                onToggle={() => handleToggleChange("in_stock")}
+              />
             </div>
 
             {/* Price Filter */}
@@ -121,7 +182,7 @@ const Explore = () => {
             <div className="flex flex-wrap gap-3 h-full">
               {loading && <BookLoader />}
               {!loading &&
-                books?.map((book) => (
+                books?.bookData?.map((book) => (
                   <div key={book.bid}>
                     <BookCard book={book} />
                   </div>
