@@ -8,6 +8,14 @@ function generateAlphanumericString(length = 8) {
   return result;
 }
 
+const generateJwtToken = (payload, secret) => {
+  if(!payload || !secret) return null;
+  const jwt = require("jsonwebtoken");
+  const token = jwt.sign(payload, secret, { expiresIn: "1d" })
+  return token;
+}
+
 module.exports = {
   generateAlphanumericString,
+  generateJwtToken
 };
