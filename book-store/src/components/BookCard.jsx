@@ -13,7 +13,6 @@ const BookCard = ({ book }) => {
   return (
     <div className="border rounded-lg shadow-lg p-3 flex flex-col w-[250px] bg-white relative font-sans">
       <Link
-        target="_blank"
         to={`/book-details/${book?.bid}`}
         className="relative mb-4 w-full h-48 bg-gray-100 flex items-center justify-center rounded-md overflow-hidden"
       >

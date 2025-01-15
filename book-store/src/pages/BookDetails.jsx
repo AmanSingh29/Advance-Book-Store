@@ -2,14 +2,17 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import NavBar from "../components/NavBar";
 import BookLoader from "../components/BookLoader";
 import { calculateDiscount } from "../utils/commonFunctions";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useApi from "../hooks/useApi";
 import { BOOK_DETAILS_PATH } from "../constants/endpoints";
+import { useAppContext } from "../context/AppContext";
 
 const BookDetails = () => {
   const { bid } = useParams();
   const { api, loading } = useApi();
+  const { cart, addToCart, showToast } = useAppContext();
   const [book, setBook] = useState({});
+  const navigate = useNavigate();
 
   const discountedPrice = useMemo(() => {
     const { price, discount, is_on_discount } = book || {};
@@ -21,6 +24,19 @@ const BookDetails = () => {
     const response = await api.get(BOOK_DETAILS_PATH, { params: { bid } });
     if (response.data) setBook(response.data);
   }, [bid]);
+
+  const navigateToCart = useCallback(() => {
+    navigate("/cart");
+  }, []);
+
+  const handleAddToCart = useCallback(() => {
+    if (cart[bid]) {
+      navigateToCart();
+    } else {
+      addToCart({ [bid]: 1 });
+      showToast("success", "Book Added To Cart Successfully!");
+    }
+  }, [bid, cart]);
 
   useEffect(() => {
     fetchBookDetails();
@@ -107,8 +123,11 @@ const BookDetails = () => {
             <p className="text-xl font-bold text-navy">
               Total: ₹{book?.is_on_discount ? discountedPrice : book?.price}
             </p>
-            <button className="bg-navy text-white px-6 py-2 rounded-md hover:bg-blue-800 transition">
-              Add to Cart
+            <button
+              onClick={handleAddToCart}
+              className="bg-navy text-white px-6 py-2 rounded-md hover:bg-blue-800 transition"
+            >
+              {cart[bid] ? "Go To Cart" : "Add to Cart"}
             </button>
           </div>
         </div>

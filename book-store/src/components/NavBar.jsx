@@ -1,28 +1,73 @@
-import React from "react";
+import React, { useMemo } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
 import SearchBar from "./SearchBar";
-import { Link } from "react-router-dom";
-import { HamburgerIcon } from "../assets";
+import {
+  UserIcon,
+  ShoppingCartIcon,
+  Bars3Icon,
+} from "@heroicons/react/24/outline";
 
 const NavBar = () => {
+  const { user, cart } = useAppContext();
+  const navigate = useNavigate();
+
+  const handleAccountClick = () => {
+    if (!user) {
+      navigate("/login");
+    } else {
+      navigate("/dashboard");
+    }
+  };
+
+  const cartItems = useMemo(() => {
+    return Object.keys(cart)?.length;
+  }, [cart]);
+
   return (
-    <div className="flex content-center lg:justify-around justify-between px-4 lg:px-0 w-full bg-navy py-3 text-white">
-      <Link to={"/"}>
-        <div>BookNest</div>
-      </Link>
-      <div className="w-96 lg:block hidden">
+    <div className="bg-navy text-white py-4 px-6 shadow-md">
+      <div className="container mx-auto flex items-center justify-between">
+        {/* Logo */}
+        <Link to="/" className="text-xl font-bold tracking-wide">
+          BookNest
+        </Link>
+
+        {/* Search Bar (hidden on small screens) */}
+        <div className="hidden lg:block w-1/3">
+          <SearchBar />
+        </div>
+
+        {/* Navigation Links */}
+        <div className="hidden md:flex items-center space-x-6 font-medium">
+          <Link to="/categories" className="hover:text-gray-300">
+            Categories
+          </Link>
+          <div
+            className="flex items-center space-x-2 cursor-pointer hover:text-gray-300"
+            onClick={handleAccountClick}
+          >
+            <UserIcon className="h-6 w-6" />
+            <span>{user ? user.name : "My Account"}</span>
+          </div>
+          <Link to="/cart" className="relative hover:text-gray-300">
+            <ShoppingCartIcon className="h-6 w-6" />
+            {cartItems > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5 py-0.5">
+                {cartItems}
+              </span>
+            )}
+          </Link>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <div className="md:hidden">
+          <Bars3Icon className="h-6 w-6 cursor-pointer" />
+        </div>
+      </div>
+
+      {/* Mobile Search Bar */}
+      <div className="block lg:hidden mt-4">
         <SearchBar />
-      </div>
-      <div className="md:flex hidden lg:w-1/3 xl:w-1/4 w-1/2 justify-between font-semibold">
-        <li className="cursor-pointer list-none">Categories</li>
-        <Link to={"/login"} className="cursor-pointer">
-          <li className="list-none">My Account</li>
-        </Link>
-        <Link to={"/contact"} className="cursor-pointer">
-          <li className="list-none">Cart</li>
-        </Link>
-      </div>
-      <div className="md:hidden block">
-        <HamburgerIcon className={"h-7 w-7"} />
       </div>
     </div>
   );

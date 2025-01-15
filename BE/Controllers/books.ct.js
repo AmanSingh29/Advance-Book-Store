@@ -9,6 +9,7 @@ module.exports = {
   getBooks,
   getBookSuggestions,
   getBookDetails,
+  getBookListByBIDS,
 };
 
 async function createBook(req, res, next) {
@@ -175,6 +176,18 @@ async function getBookDetails(req, res, next) {
   try {
     const { bid } = req.query;
     const response = await Book.findOne({ bid });
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function getBookListByBIDS(req, res, next) {
+  try {
+    const { bids = [] } = req.body;
+    const response = await Book.find({ bid: { $in: bids } }).select(
+      "title price author is_on_discount discount bid image"
+    );
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });

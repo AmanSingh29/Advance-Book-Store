@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { useCallback } from "react";
 import { Link, useNavigate, useNavigation } from "react-router-dom";
 import { SIGN_UP_PATH } from "../constants/endpoints";
-import { useToast } from "../context/ToastContext";
 import useApi from "../hooks/useApi";
+import { useAppContext } from "../context/AppContext";
 
 const Register = () => {
   const { api, loading } = useApi();
-  const showToast = useToast()
+  const { showToast } = useAppContext();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -22,18 +22,18 @@ const Register = () => {
   };
 
   const navigateToLogin = useCallback(() => {
-    navigate("/login")
-  },[])
+    navigate("/login");
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await api.post(SIGN_UP_PATH, formData);
-      if(response.data.success){
+      if (response.data.success) {
         navigateToLogin();
-        showToast("success", response.data.message)
-      }else{
-        showToast("error", response.data.message)
+        showToast("success", response.data.message);
+      } else {
+        showToast("error", response.data.message);
       }
     } catch (error) {
       showToast("error", error.response.data.message || error.message);

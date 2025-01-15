@@ -4,6 +4,7 @@ const {
   getBooks,
   getBookSuggestions,
   getBookDetails,
+  getBookListByBIDS,
 } = require("../Controllers/books.ct");
 const route = express.Router();
 
@@ -14,5 +15,7 @@ route.post("/create", createBook);
 route.get("/suggestions", getBookSuggestions);
 
 route.get("/details", getBookDetails);
+
+route.post("/list", getBookListByBIDS);
 
 module.exports = route;

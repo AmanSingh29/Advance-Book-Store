@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LOGIN_PATH } from "../constants/endpoints";
-import { useToast } from "../context/ToastContext";
+import { useAppContext } from "../context/AppContext";
 import useApi from "../hooks/useApi";
 
 const Login = () => {
   const { api } = useApi();
-  const showToast = useToast()
+  const { showToast, setUser, setToken } = useAppContext();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
@@ -20,21 +20,26 @@ const Login = () => {
   };
 
   const navigateToLogin = useCallback(() => {
-    navigate("/")
-  },[])
+    navigate("/");
+  }, []);
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await api.post(LOGIN_PATH, formData);
-      if(response.data.success){
-        navigateToLogin("/")
-        showToast("success", response.data.message)
-      }else{
-        showToast("error", response.data.message)
+      if (response.data.success) {
+        if (response.data.user) setUser(response.data.user);
+        if (response.data.token) {
+          setToken(response.data.token);
+          localStorage.setItem("token", response.data.token);
+        }
+        navigateToLogin("/");
+        showToast("success", response.data.message);
+      } else {
+        showToast("error", response.data.message);
       }
     } catch (error) {
-      showToast("error", error.response.data.message || error.message)
+      showToast("error", error.response.data.message || error.message);
     }
   };
 

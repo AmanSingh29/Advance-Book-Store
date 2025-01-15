@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { SearchIcon } from "../assets";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline"; // Using Heroicons
 import useApi from "../hooks/useApi";
 import { SUGGESTION_PATH } from "../constants/endpoints";
 import { useNavigate } from "react-router-dom";
@@ -11,11 +11,12 @@ const SearchBar = () => {
   const { api } = useApi();
 
   const navigate = useNavigate();
+
   const handleNavigate = useCallback(
     (bid) => {
       navigate(`/book-details/${bid}`);
     },
-    [searchSuggestation, textInput]
+    [navigate]
   );
 
   const fetchSuggestion = useCallback(async () => {
@@ -39,34 +40,39 @@ const SearchBar = () => {
     }, 300);
     setDebounceTimeout(newTimeout);
     return () => clearTimeout(newTimeout);
-  }, [textInput, fetchSuggestion]);
+  }, [textInput]);
 
   const handleSearch = useCallback(() => {
     setSearchSuggestation([]);
     navigate(`/explore/?search_text=${textInput}`);
-  }, [textInput]);
+  }, [textInput, navigate]);
 
   return (
-    <div className="w-full relative flex">
-      <input
-        className="outline-none px-2 py-1 w-11/12 text-black rounded-sm"
-        type="text"
-        placeholder="Search by title, author or genre.."
-        value={textInput}
-        onChange={(e) => setTextInput(e.target.value)}
-      />
-      <div
-        onClick={handleSearch}
-        className="w-1/12 bg-transparent border cursor-pointer border-l-white flex justify-center items-center"
-      >
-        <SearchIcon className="h-5 w-5" />
+    <div className="relative w-full max-w-lg mx-auto">
+      {/* Search Bar */}
+      <div className="flex items-center bg-gray-100 border border-gray-300 rounded-full shadow-sm">
+        <input
+          type="text"
+          placeholder="Search books by title, author, or genre..."
+          value={textInput}
+          onChange={(e) => setTextInput(e.target.value)}
+          className="flex-1 px-4 py-2 text-sm text-gray-800 bg-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          onClick={handleSearch}
+          className="p-2 text-blue-500 hover:text-blue-600"
+        >
+          <MagnifyingGlassIcon className="h-5 w-5" />
+        </button>
       </div>
+
+      {/* Suggestion Dropdown */}
       {searchSuggestation?.length > 0 && (
-        <div className="absolute z-20 top-full w-full border bg-white border-gray-600 border-t-0 rounded-sm max-h-[70vh] overflow-y-auto">
-          {searchSuggestation?.map((suggestion, index) => (
+        <div className="absolute top-full left-0 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-2 max-h-60 overflow-y-auto z-50">
+          {searchSuggestation.map((suggestion, index) => (
             <p
               key={index}
-              className="px-2 py-2 text-black cursor-pointer border-b border-gray-400 hover:bg-gray-200"
+              className="px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-blue-100"
               onClick={() => handleNavigate(suggestion?.bid)}
             >
               {suggestion?.title}
