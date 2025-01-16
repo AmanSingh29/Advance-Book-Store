@@ -84,7 +84,7 @@ export const AppProvider = ({ children }) => {
       }}
     >
       {children}
-      <div className="fixed top-5 right-5 space-y-4 z-50">
+      <div className="fixed top-12 right-5 space-y-4 z-50">
         {toasts.map((toast) => (
           <Toast
             key={toast.id}

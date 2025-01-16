@@ -3,12 +3,14 @@ import { useAppContext } from "../context/AppContext";
 import { TrashIcon, PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
 import NavBar from "../components/NavBar";
 import useApi from "../hooks/useApi";
-import { BOOKS_PATH } from "../constants/endpoints";
+import { BOOKS_PATH, USER_PATH } from "../constants/endpoints";
+import AddressPopup from "../components/AddressPopup";
 
 const Cart = () => {
-  const { removeFromCart, cart, addToCart } = useAppContext();
+  const { removeFromCart, cart, addToCart, user, setUser } = useAppContext();
   const { api } = useApi();
   const [cartItems, setCartItems] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
 
   const totalPrice = useMemo(() => {
     return cartItems.reduce((total, item) => {
@@ -56,6 +58,29 @@ const Cart = () => {
   useEffect(() => {
     getBooks();
   }, []);
+
+  const handleProceedToCheckout = () => {
+    setShowPopup(true);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+  const handleSaveAddresses = async (updatedAddresses) => {
+    if (!updatedAddresses) return;
+    const userAddress = user?.address || [];
+    if (!userAddress?.includes(updatedAddresses)) {
+      await api.patch(USER_PATH, {
+        address: [...userAddress, updatedAddresses],
+      });
+      setUser((prev) => ({
+        ...prev,
+        address: [...userAddress, updatedAddresses],
+      }));
+    }
+    setShowPopup(false);
+  };
 
   return (
     <>
@@ -128,13 +153,23 @@ const Cart = () => {
                 <p className="font-bold text-lg">Total</p>
                 <p className="font-bold text-lg">₹{totalPrice.toFixed(2)}</p>
               </div>
-              <button className="bg-navy text-white w-full py-3 mt-6 rounded-md hover:bg-blue-800 transition">
+              <button
+                onClick={handleProceedToCheckout}
+                className="bg-navy text-white w-full py-3 mt-6 rounded-md hover:bg-blue-800 transition"
+              >
                 Proceed to Checkout
               </button>
             </div>
           </div>
         )}
       </div>
+      {showPopup && (
+        <AddressPopup
+          addresses={user?.address || []}
+          onClose={handleClosePopup}
+          onSave={handleSaveAddresses}
+        />
+      )}
     </>
   );
 };

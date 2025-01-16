@@ -1,8 +1,13 @@
 const express = require("express");
 const { verifyAuth } = require("../middleware/auth.mw");
-const { getUserDataById } = require("../Controllers/user.ct");
+const {
+  getUserDataById,
+  updateUserDataById,
+} = require("../Controllers/user.ct");
 const route = express.Router();
 
-route.get("/", verifyAuth, getUserDataById);
+route
+  .get("/", verifyAuth, getUserDataById)
+  .patch("/", verifyAuth, updateUserDataById);
 
 module.exports = route;
