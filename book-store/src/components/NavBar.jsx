@@ -14,7 +14,7 @@ const NavBar = () => {
 
   const handleAccountClick = () => {
     if (!user) {
-      navigate("/login");
+      navigate("/login?path=dashboard");
     } else {
       navigate("/dashboard");
     }
