@@ -5,6 +5,7 @@ import BookDetails from "./pages/BookDetails";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Cart from "./pages/Cart";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/register" element={<Register />} />
           <Route exact path="/cart" element={<Cart />} />
+          <Route exact path="/dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </>

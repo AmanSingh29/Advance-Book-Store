@@ -39,9 +39,6 @@ const NavBar = () => {
 
         {/* Navigation Links */}
         <div className="hidden md:flex items-center space-x-6 font-medium">
-          <Link to="/categories" className="hover:text-gray-300">
-            Categories
-          </Link>
           <div
             className="flex items-center space-x-2 cursor-pointer hover:text-gray-300"
             onClick={handleAccountClick}

@@ -1,11 +1,18 @@
 import React, { useState } from "react";
 import { useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LOGIN_PATH } from "../constants/endpoints";
 import { useAppContext } from "../context/AppContext";
 import useApi from "../hooks/useApi";
 
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
+
 const Login = () => {
+  const query = useQuery();
+  const path = query.get("path");
+  const openPopup = query.get("openpopup");
   const { api } = useApi();
   const { showToast, setUser, setToken } = useAppContext();
   const navigate = useNavigate();
@@ -19,9 +26,6 @@ const Login = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const navigateToLogin = useCallback(() => {
-    navigate("/");
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,7 +37,17 @@ const Login = () => {
           setToken(response.data.token);
           localStorage.setItem("token", response.data.token);
         }
-        navigateToLogin("/");
+        if(path){
+          let newPath = `/${path}`
+          console.log("this is calling above-----------", openPopup)
+          if(openPopup){
+            console.log("this is calling-----------", openPopup)
+            newPath += `?openpopup=true`
+          } 
+          navigate(newPath);
+        }else{
+          navigate("/");
+        }
         showToast("success", response.data.message);
       } else {
         showToast("error", response.data.message);
