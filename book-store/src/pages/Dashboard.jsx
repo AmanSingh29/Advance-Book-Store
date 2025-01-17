@@ -11,11 +11,13 @@ import useApi from "../hooks/useApi";
 import { useAppContext } from "../context/AppContext";
 import { ORDER_PATH } from "../constants/endpoints";
 import BookLoader from "../components/BookLoader";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const { api, loading } = useApi();
-  const { showToast } = useAppContext();
+  const { showToast, token } = useAppContext();
   const [data, setData] = useState({});
+  const navigate = useNavigate();
 
   const fetchData = useCallback(async () => {
     try {
@@ -33,14 +35,18 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    fetchData();
+    if (!token) {
+      navigate("/login?path=dashboard");
+    } else {
+      fetchData();
+    }
   }, []);
 
   return (
     <>
       <NavBar />
       {loading ? (
-        <div className="w-full h-[80vh]" >
+        <div className="w-full h-[80vh]">
           <BookLoader text="Getting details..." />
         </div>
       ) : (
@@ -76,38 +82,47 @@ const Dashboard = () => {
           {/* Orders */}
           <div className="bg-white shadow rounded-lg p-6">
             <h2 className="text-2xl font-bold mb-4">Your Orders</h2>
-            <div className="space-y-4">
-              {data?.orders?.map((order) => (
-                <div
-                  key={order._id}
-                  className="border rounded-lg p-4 flex flex-col md:flex-row justify-between items-start md:items-center hover:shadow-lg transition cursor-pointer"
-                  onClick={() => {
-                    // Navigate to order details page
-                    window.location.href = `/order/${order.oid}`;
-                  }}
-                >
-                  <div className="flex-grow space-y-2">
-                    <p className="text-lg font-semibold">
-                      <ShoppingBagIcon className="h-5 w-5 inline-block mr-2" />
-                      Order ID: {order.oid}
-                    </p>
-                    <p className="text-gray-600 text-sm md:text-base">
-                      <MapPinIcon className="h-5 w-5 inline-block mr-2" />
-                      Address: {order.address}
-                    </p>
-                    <p className="text-gray-600 text-sm md:text-base">
-                      Status: {order.status}
-                    </p>
-                    <p className="text-gray-600 text-sm md:text-base">
-                      Total Amount: ₹{order.total_amount.toFixed(2)}
+            {data?.orders?.length > 0 ? (
+              <div className="space-y-4">
+                {data?.orders?.map((order) => (
+                  <div
+                    key={order._id}
+                    className="border rounded-lg p-4 flex flex-col md:flex-row justify-between items-start md:items-center hover:shadow-lg transition cursor-pointer"
+                    onClick={() => {
+                      // Navigate to order details page
+                      window.location.href = `/order/${order.oid}`;
+                    }}
+                  >
+                    <div className="flex-grow space-y-2">
+                      <p className="text-lg font-semibold">
+                        <ShoppingBagIcon className="h-5 w-5 inline-block mr-2" />
+                        Order ID: {order.oid}
+                      </p>
+                      <p className="text-gray-600 text-sm md:text-base">
+                        <MapPinIcon className="h-5 w-5 inline-block mr-2" />
+                        Address: {order.address}
+                      </p>
+                      <p className="text-gray-600 text-sm md:text-base">
+                        Status: {order.status}
+                      </p>
+                      <p className="text-gray-600 text-sm md:text-base">
+                        Total Amount: ₹{order.total_amount.toFixed(2)}
+                      </p>
+                    </div>
+                    <p className="text-blue-600 font-medium mt-4 md:mt-0 md:ml-4">
+                      View Details
                     </p>
                   </div>
-                  <p className="text-blue-600 font-medium mt-4 md:mt-0 md:ml-4">
-                    View Details
-                  </p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-600 text-lg">
+                  You don’t have any orders yet. Start shopping to place your
+                  first order!
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -68,6 +68,7 @@ const Cart = () => {
       bids = JSON.parse(items);
       bids = Object.keys(bids);
     }
+    if(!bids?.length) return;
     const response = await api.post(`${BOOKS_PATH}/list`, { bids });
     if (response.data) setCartItems(response.data);
   }, [cart]);
@@ -122,9 +123,9 @@ const Cart = () => {
         const response = await api.post(ORDER_PATH, payload);
         if (response.data) {
           if (response.data.success) {
+            navigate("/dashboard");
             showToast("success", response.data.message);
             clearCart();
-            setCartItems([]);
           } else {
             showToast("error", "Something went wrong!");
           }
