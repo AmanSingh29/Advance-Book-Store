@@ -101,7 +101,7 @@ async function getBooks(req, res, next) {
         count: [{ $count: "count" }],
         data: [
           {
-            $sort: { [sort_by]: sort_order === SORT_ORDER.ASCENDING ? 1 : -1 },
+            $sort: { [sort_by]: sort_order === SORT_ORDER.ASCENDING ? 1 : -1, _id: 1, },
           },
           { $skip: (page - 1) * limit },
           { $limit: limit },
